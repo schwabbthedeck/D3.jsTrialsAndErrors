@@ -1,6 +1,8 @@
 // creating stacked bar chart 
 // using example from this site: 
 // https://tympanus.net/codrops/2012/08/29/multiple-area-charts-with-d3-js/
+// using this for reference as well
+// http://bl.ocks.org/mstanaland/6100713
 // reproduced here for better understanding
 // goal is to reuse multiple chart areas from link above to build multiple bar graphs
 
@@ -191,6 +193,8 @@
         .tickSize(-width)
         .tickFormat("");
 
+      var toolTipText = "Regular Time: ";
+
       // append/create actual hours bars
       chartContainer.selectAll(".bar.actual-hours")
         .data(this.chartData)
@@ -200,7 +204,15 @@
         .attr("y", function (d) { return y(d.ActualRegHrs); })
         .attr("height", function (d) { return chartHeight - y(d.ActualRegHrs); })
         .attr("width", barWidth)
-        .attr("dx", -5);
+        .attr("dx", -5)
+        .on("mouseover", function () { tooltip.style("display", null); })
+        .on("mouseout", function () { tooltip.style("display", "none"); })
+        .on("mousemove", function (d) {
+          var xPosition = d3.mouse(this)[0] - 15;
+          var yPosition = d3.mouse(this)[1] - 25;
+          tooltip.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
+          tooltip.select("text").text(d.ActualRegHrs)
+        });
 
       // append/create overtime hours bars
       chartContainer.selectAll(".bar.overtime-hours")
@@ -263,6 +275,24 @@
         .attr("text-anchor", "start")
         .attr("font-size", "1.1em")
         .text(localEmployeeName);
+
+      // Prep the tooltip bits, initial display is hidden
+      var tooltip = chartContainer.append("g")
+        .attr("class", "tooltip")
+        .style("display", "none");
+
+      tooltip.append("rect")
+        .attr("width", 30)
+        .attr("height", 20)
+        .attr("fill", "white")
+        .style("opacity", 0.5);
+
+      tooltip.append("text")
+        .attr("x", 15)
+        .attr("dy", "1.2em")
+        .style("text-anchor", "middle")
+        .attr("font-size", "10px")
+        .attr("font-weight", "normal");
 
     }
   }
