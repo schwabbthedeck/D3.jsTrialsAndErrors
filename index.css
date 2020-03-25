@@ -1,0 +1,53 @@
+/* .chart rect {
+  fill: steelblue;
+}
+
+.chart text {
+  fill: white;
+  font: 10px sans-serif;
+  text-anchor: end;
+} 
+
+.bar {
+  fill: steelblue;
+}
+
+.axis text {
+  font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.x.axis path {
+  display: none;
+}*/
+
+/* bar colors */
+.bar.actual-hours {
+  fill: green;
+}
+
+.bar.overtime-hours {
+  fill: red;
+}
+
+.bar.planned-hours {
+  fill: none;
+  stroke: orange;
+}
+
+/* grid line styles */
+.grid line {
+  stroke: lightgrey;
+  stroke-opacity: 0.7;
+  shape-rendering: crispEdges;
+}
+
+.grid path {
+  stroke-width: 0;
+}
