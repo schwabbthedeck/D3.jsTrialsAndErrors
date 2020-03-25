@@ -20,7 +20,7 @@
     .attr("width", (width + margin.left + margin.right));
   //    .attr("height", (height + margin.top + margin.bottom));
 
-  d3.csv('./sampleData/planned_vs_actual.csv', function (d) {
+  d3.csv('./sampleData/cleaned_planned_vs_actual.csv', function (d) {
     return {
       EmployeeName: d.EmployeeName,
       StartDate: new Date(d.StartDate),
