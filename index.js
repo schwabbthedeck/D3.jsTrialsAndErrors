@@ -8,8 +8,7 @@
 
 // TODO:
 // add legend
-// add add tool tips
-// add title 
+// (?)add title 
 // (?)add bottom and right axis labels
 
 (function () {
@@ -193,10 +192,6 @@
         .tickSize(-width)
         .tickFormat("");
 
-      var toolTipRegTime = "Regular Time: ";
-      var toolTipOvtTime = "Overtime: ";
-      var toolTipPlannedHrs = "Planned Hours: ";
-
       // append/create actual hours bars
       chartContainer.selectAll(".bar.actual-hours")
         .data(this.chartData)
@@ -209,14 +204,7 @@
         .attr("dx", -5)
         .on("mouseover", function () { tooltip.style("display", null); })
         .on("mouseout", function () { tooltip.style("display", "none"); })
-        .on("mousemove", function (d) {
-          var xPosition = d3.mouse(this)[0] - 15;
-          var yPosition = d3.mouse(this)[1] - 55;
-          tooltip.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
-          tooltip.select("text.regular-hours").text(toolTipRegTime + d.ActualRegHrs);
-          tooltip.select("text.overtime-hours").text(toolTipOvtTime + d.ActualOvtHrs);
-          tooltip.select("text.planned-hours").text(toolTipPlannedHrs + d.PeriodHrs);
-        });
+        .on("mousemove", updateToolTip);
 
       // append/create overtime hours bars
       chartContainer.selectAll(".bar.overtime-hours")
@@ -230,14 +218,7 @@
         .attr("dx", -5)
         .on("mouseover", function () { tooltip.style("display", null); })
         .on("mouseout", function () { tooltip.style("display", "none"); })
-        .on("mousemove", function (d) {
-          var xPosition = d3.mouse(this)[0] - 15;
-          var yPosition = d3.mouse(this)[1] - 55;
-          tooltip.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
-          tooltip.select("text.regular-hours").text(toolTipRegTime + d.ActualRegHrs);
-          tooltip.select("text.overtime-hours").text(toolTipOvtTime + d.ActualOvtHrs);
-          tooltip.select("text.planned-hours").text(toolTipPlannedHrs + d.PeriodHrs);
-        });
+        .on("mousemove", updateToolTip);
 
       // append/create planned hours bars
       chartContainer.selectAll(".bar.planned-hours")
@@ -251,14 +232,7 @@
         .attr("dx", -5)
         .on("mouseover", function () { tooltip.style("display", null); })
         .on("mouseout", function () { tooltip.style("display", "none"); })
-        .on("mousemove", function (d) {
-          var xPosition = d3.mouse(this)[0] - 15;
-          var yPosition = d3.mouse(this)[1] - 55;
-          tooltip.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
-          tooltip.select("text.regular-hours").text(toolTipRegTime + d.ActualRegHrs);
-          tooltip.select("text.overtime-hours").text(toolTipOvtTime + d.ActualOvtHrs);
-          tooltip.select("text.planned-hours").text(toolTipPlannedHrs + d.PeriodHrs);
-        });
+        .on("mousemove", updateToolTip);
 
       // only show bottom axis on last employee
       if (this.showBottomAxis) {
@@ -307,13 +281,13 @@
 
       tooltip.append("rect")
         .attr("width", 90)
-        .attr("height", 40)
+        .attr("height", 50)
         .attr("x", -30)
         .attr("fill", "white")
         .style("opacity", 0.75);
 
       tooltip.append("text")
-        .attr("class", "regular-hours")
+        .attr("class", "week-of")
         .attr("x", 15)
         .attr("dy", "1.2em")
         .style("text-anchor", "middle")
@@ -321,7 +295,7 @@
         .attr("font-weight", "normal");
 
       tooltip.append("text")
-        .attr("class", "overtime-hours")
+        .attr("class", "regular-hours")
         .attr("x", 15)
         .attr("dy", "2.4em")
         .style("text-anchor", "middle")
@@ -329,12 +303,36 @@
         .attr("font-weight", "normal");
 
       tooltip.append("text")
-        .attr("class", "planned-hours")
+        .attr("class", "overtime-hours")
         .attr("x", 15)
         .attr("dy", "3.6em")
         .style("text-anchor", "middle")
         .attr("font-size", "10px")
         .attr("font-weight", "normal");
+
+      tooltip.append("text")
+        .attr("class", "planned-hours")
+        .attr("x", 15)
+        .attr("dy", "4.8em")
+        .style("text-anchor", "middle")
+        .attr("font-size", "10px")
+        .attr("font-weight", "normal");
+
+        function updateToolTip(d) {
+          var dayFormat = d3.timeFormat("%b-%d");
+          var toolTipWeekOf = "Week of ";
+          var toolTipRegTime = "Regular Time: ";
+          var toolTipOvtTime = "Overtime: ";
+          var toolTipPlannedHrs = "Planned Hours: ";
+
+          var xPosition = d3.mouse(this)[0] - 15;
+          var yPosition = d3.mouse(this)[1] - 55;
+          tooltip.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
+          tooltip.select("text.week-of").text(toolTipWeekOf + dayFormat(d3.timeMonday(d.StartDate)));
+          tooltip.select("text.regular-hours").text(toolTipRegTime + d.ActualRegHrs);
+          tooltip.select("text.overtime-hours").text(toolTipOvtTime + d.ActualOvtHrs);
+          tooltip.select("text.planned-hours").text(toolTipPlannedHrs + d.PeriodHrs);
+        }
 
     }
   }
