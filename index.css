@@ -37,7 +37,8 @@
 }
 
 .bar.planned-hours {
-  fill: none;
+  fill: white;
+  opacity: 0.50;
   stroke: orange;
 }
 
