@@ -12,7 +12,7 @@
 // (?)add bottom and right axis labels
 
 (function () {
-  var margin = { top: 10, right: 40, bottom: 150, left: 120 };
+  var margin = { top: 10, right: 140, bottom: 150, left: 120 };
   var width = 940 - margin.left - margin.right;
   // putting off height measurement until we know how many employees we have
   // var height = 500 - margin.top - margin.bottom;
@@ -33,6 +33,28 @@
       ScaleMaxHrs: +d.scale_maxhrs
     }
   }).then(createCharts);
+
+  // append legend
+  var colors = ["green", "red", "white"];
+  var labels = ["Regular Time", "Overtime", "Planned Hours"];
+  var legend = svg.selectAll(".legend")
+    .data(labels)
+    .enter().append("g")
+    .attr("class", function (d, i) { return "legend " + d.replace(/ /g, "_") })
+    .attr("transform", function (d, i) { return "translate(190," + (20 + (i * 19)) + ")"; });
+
+  legend.append("rect")
+    .attr("x", width - 18)
+    .attr("width", 18)
+    .attr("height", 18)
+    .style("fill", function (d, i) { return colors.slice()[i]; });
+
+  legend.append("text")
+    .attr("x", width + 5)
+    .attr("y", 9)
+    .attr("dy", ".35em")
+    .style("text-anchor", "start")
+    .text(function (d, i) { return labels.slice()[i] });
 
   function createCharts(data) {
     // array of charts
@@ -318,21 +340,21 @@
         .attr("font-size", "10px")
         .attr("font-weight", "normal");
 
-        function updateToolTip(d) {
-          var dayFormat = d3.timeFormat("%b-%d");
-          var toolTipWeekOf = "Week of ";
-          var toolTipRegTime = "Regular Time: ";
-          var toolTipOvtTime = "Overtime: ";
-          var toolTipPlannedHrs = "Planned Hours: ";
+      function updateToolTip(d) {
+        var dayFormat = d3.timeFormat("%b-%d");
+        var toolTipWeekOf = "Week of ";
+        var toolTipRegTime = "Regular Time: ";
+        var toolTipOvtTime = "Overtime: ";
+        var toolTipPlannedHrs = "Planned Hours: ";
 
-          var xPosition = d3.mouse(this)[0] - 15;
-          var yPosition = d3.mouse(this)[1] - 55;
-          tooltip.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
-          tooltip.select("text.week-of").text(toolTipWeekOf + dayFormat(d3.timeMonday(d.StartDate)));
-          tooltip.select("text.regular-hours").text(toolTipRegTime + d.ActualRegHrs);
-          tooltip.select("text.overtime-hours").text(toolTipOvtTime + d.ActualOvtHrs);
-          tooltip.select("text.planned-hours").text(toolTipPlannedHrs + d.PeriodHrs);
-        }
+        var xPosition = d3.mouse(this)[0] - 15;
+        var yPosition = d3.mouse(this)[1] - 55;
+        tooltip.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
+        tooltip.select("text.week-of").text(toolTipWeekOf + dayFormat(d3.timeMonday(d.StartDate)));
+        tooltip.select("text.regular-hours").text(toolTipRegTime + d.ActualRegHrs);
+        tooltip.select("text.overtime-hours").text(toolTipOvtTime + d.ActualOvtHrs);
+        tooltip.select("text.planned-hours").text(toolTipPlannedHrs + d.PeriodHrs);
+      }
 
     }
   }

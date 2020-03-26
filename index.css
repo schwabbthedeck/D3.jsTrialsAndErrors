@@ -27,6 +27,12 @@
   display: none;
 }*/
 
+/* legend */
+.legend.Planned_Hours rect{
+  opacity: 0.8;
+  stroke: orange;
+}
+
 /* bar colors */
 .bar.actual-hours {
   fill: green;
