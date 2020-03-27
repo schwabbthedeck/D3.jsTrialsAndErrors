@@ -1,18 +1,10 @@
-// creating stacked bar chart 
-// using example from this site: 
-// https://tympanus.net/codrops/2012/08/29/multiple-area-charts-with-d3-js/
-// using this for reference as well
-// http://bl.ocks.org/mstanaland/6100713
-// reproduced here for better understanding
-// goal is to reuse multiple chart areas from link above to build multiple bar graphs
-
-// TODO:
-// (?)add title 
-// (?)add bottom and right axis labels
+// code to render planned vs actual chart
+// using D3.js 
+// also designed to run in SharePoint
 
 (function () {
   var margin = { top: 10, right: 140, bottom: 150, left: 120 };
-  var width = 940 - margin.left - margin.right;
+  var width = 820 - margin.left - margin.right;
   // putting off height measurement until we know how many employees we have
   // var height = 500 - margin.top - margin.bottom;
 
@@ -20,7 +12,7 @@
     .attr("width", (width + margin.left + margin.right));
   //    .attr("height", (height + margin.top + margin.bottom));
 
-  d3.csv('./sampleData/cleaned_planned_vs_actual.csv', function (d) {
+  d3.csv('https://perkinseastman.sharepoint.com/accounting_/Accounting-Internal-Site/D3Data/planned_vs_actual_2020-03-17.csv', function (d) {
     return {
       EmployeeName: d.EmployeeName,
       StartDate: new Date(d.StartDate),
@@ -123,37 +115,6 @@
       }));
     }
 
-    // var employeeCount = employees.length;
-    // for (var i = 0; i < employeeCount; i++) {
-    //   charts.push(new Chart({
-    //     data: data.slice(),
-    //     width: width,
-    //     height: height * (1 / employeeCount),
-    //     maxDataPoint: scaleMaxHours,
-    //     startDate: minStartDate,
-    //     endDate: maxEndDate,
-    //     svg: svg,
-    //     id: i,
-    //     name: employees[i],
-    //     margin: margin,
-    //     showBottomAxis: (i == employeeCount - 1)
-    //   }));
-    // }
-
-    // charts.push(new Chart({
-    //   data: data.slice(),
-    //     width: width,
-    //     height: height * (1/employeeCount),
-    //     maxDataPoint: scaleMaxHours,
-    //     startDate: minStartDate,
-    //     endDate: maxEndDate,
-    //     svg: svg,
-    //     id: 0,
-    //     name: employees[0],
-    //     margin: margin,
-    //     showBottomAxis: false
-    // }));
-
     function Chart(options) {
       this.chartData = options.chartData;
       this.width = options.width;
@@ -181,15 +142,6 @@
       var x = d3.scaleTime()
         .range([0, this.width])
         .domain([this.startDate, this.endDate]);
-
-      // var x = d3.scaleBand()
-      //   .rangeRound([0, this.width])
-      //   .domain(this.chartData.map(function (d) { return d3.timeMonday(d.StartDate)}))
-      //   .padding(0.1);
-
-      // var x = d3.scaleOrdinal()
-      //   .domain(this.chartData.map(function (d) { return d3.timeMonday(d.StartDate)}))
-      //   .range([0, width]);
 
       // y scale is linear based on max hours
       var y = d3.scaleLinear()
