@@ -2,7 +2,7 @@
 // using D3.js 
 // also designed to run in SharePoint
 
-(function () {
+function renderChart(csvData) {
   var margin = { top: 10, right: 140, bottom: 150, left: 120 };
   var width = 820 - margin.left - margin.right;
   // putting off height measurement until we know how many employees we have
@@ -12,18 +12,20 @@
     .attr("width", (width + margin.left + margin.right));
   //    .attr("height", (height + margin.top + margin.bottom));
 
-  d3.csv('https://perkinseastman.sharepoint.com/accounting_/Accounting-Internal-Site/D3Data/planned_vs_actual_2020-03-17.csv', function (d) {
-    return {
-      EmployeeName: d.EmployeeName,
-      StartDate: new Date(d.StartDate),
-      EndDate: new Date(d.EndDate),
-      Project: d.Project,
-      PeriodHrs: +d.PeriodHrs,
-      ActualRegHrs: +d.ActualRegHrs,
-      ActualOvtHrs: +d.ActualOvtHrs,
-      ScaleMaxHrs: +d.scale_maxhrs
-    }
-  }).then(createCharts);
+  // commented out because it isn't supported in IE -_-
+  // d3.csv('https://perkinseastman.sharepoint.com/accounting_/Accounting-Internal-Site/D3Data/planned_vs_actual_2020-03-17.csv', function (d) {
+  //   return {
+  //     EmployeeName: d.EmployeeName,
+  //     StartDate: new Date(d.StartDate),
+  //     EndDate: new Date(d.EndDate),
+  //     Project: d.Project,
+  //     PeriodHrs: +d.PeriodHrs,
+  //     ActualRegHrs: +d.ActualRegHrs,
+  //     ActualOvtHrs: +d.ActualOvtHrs,
+  //     ScaleMaxHrs: +d.scale_maxhrs
+  //   }
+  // }).then(createCharts);
+  createCharts(csvData);
 
   // append legend
   var colors = ["green", "red", "white"];
@@ -310,4 +312,56 @@
     }
   }
 
-})();
+};
+
+// fetch csv file from library
+function fetchCsvFile() {
+  var siteUrl = _spPageContextInfo.siteAbsoluteUrl;
+  var executor = new SP.RequestExecutor(siteUrl);
+  var url = siteUrl + "/_api/web/GetFileByServerRelativeUrl('/accounting_/Accounting-Internal-Site/D3Data/planned_vs_actual_2020-03-17.csv')/$value";
+  executor.executeAsync({
+    url: url,
+    method: "GET",
+    headers: { "Accept": "application/json; odata=verbose" },
+    success: successFetchCsv,
+    error: errorFetchCsv
+  });
+}
+
+function successFetchCsv(data) {
+  var csvData = d3.csvParse(data.body, function (d) {
+    return {
+      Company: d.Company,
+      StartDate: new Date(d.StartDate),
+      EndDate: new Date(d.EndDate),
+      Period: d.Period,
+      Employee: d.Employee,
+      EmployeeName: d.EmployeeName,
+      TargetRatio: +d.TargetRatio,
+      Project: d.Project,
+      TargetHrs: +d.TargetHrs,
+      PeriodHrs: +d.PeriodHrs,
+      ActualRegHrs: +d.ActualRegHrs,
+      ActualOvtHrs: +d.ActualOvtHrs,
+      ProjectName: d.ProjectName,
+      ChargeType: d.ChargeType,
+      ProjectStatus: d.ProjectStatus,
+      Org: d.Org,
+      PracticeArea: d.PracticeArea,
+      CA: d.CA,
+      PM: d.PM,
+      PIC: d.PIC,
+      BD: d.BD,
+      ProjectNumber: d.ProjectNumber,
+      ScaleMaxHrs: +d.scale_maxhrs
+    };
+  });
+  renderChart(csvData);
+}
+
+function errorFetchCsv(data) {
+  console.log("Error retrieving CSV file from library.");
+  console.log(data.body);
+}
+
+fetchCsvFile();
